@@ -16,8 +16,8 @@
         body {
             background-color: #f5f7fa;
             color: #333;
-            display: flex;
             min-height: 100vh;
+            display: flex;
         }
         
         /* Sidebar Styles */
@@ -231,6 +231,7 @@
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 30px;
+            margin-bottom: 30px;
         }
         
         .chart-container, .recent-orders {
@@ -476,7 +477,7 @@
         <div class="stats-cards">
             <div class="stat-card">
                 <div class="stat-info">
-                    <h3>142</h3>
+                    <h3 id="total-orders">142</h3>
                     <p>Total Orders</p>
                 </div>
                 <div class="stat-icon orders-icon">
@@ -486,7 +487,7 @@
             
             <div class="stat-card">
                 <div class="stat-info">
-                    <h3>$12,580</h3>
+                    <h3 id="monthly-revenue">$12,580</h3>
                     <p>Revenue This Month</p>
                 </div>
                 <div class="stat-icon revenue-icon">
@@ -496,7 +497,7 @@
             
             <div class="stat-card">
                 <div class="stat-info">
-                    <h3>89</h3>
+                    <h3 id="active-customers">89</h3>
                     <p>Active Customers</p>
                 </div>
                 <div class="stat-icon customers-icon">
@@ -506,7 +507,7 @@
             
             <div class="stat-card">
                 <div class="stat-info">
-                    <h3>8</h3>
+                    <h3 id="pending-orders">8</h3>
                     <p>Pending Orders</p>
                 </div>
                 <div class="stat-icon pending-icon">
@@ -526,6 +527,7 @@
                     <div style="text-align: center; color: #6c757d;">
                         <i class="fas fa-chart-line" style="font-size: 48px; margin-bottom: 15px; color: #ddd;"></i>
                         <p>Revenue chart would appear here</p>
+                        <small>Monthly revenue: $12,580 (June 2023)</small>
                     </div>
                 </div>
             </div>
@@ -615,51 +617,64 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         // Set current date
-        const currentDate = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('current-date').textContent = currentDate.toLocaleDateString('en-US', options);
-        
-        // Add interactivity to notification button
-        document.querySelector('.notification-btn').addEventListener('click', function() {
-            alert('You have 3 new notifications');
-        });
-        
-        // Highlight active nav item
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                navItems.forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-        
-        // Simulate loading animation for stat cards
-        const statNumbers = document.querySelectorAll('.stat-info h3');
-        statNumbers.forEach(stat => {
-            const originalText = stat.textContent;
-            stat.textContent = '0';
-            
-            let counter = 0;
-            const target = parseInt(originalText.replace(/[^0-9]/g, ''));
-            const increment = target / 50;
-            
-            const updateCounter = () => {
-                if (counter < target) {
-                    counter += increment;
-                    stat.textContent = originalText.includes('$') 
-                        ? '$' + Math.round(counter).toLocaleString() 
-                        : Math.round(counter).toLocaleString();
-                    setTimeout(updateCounter, 20);
-                } else {
-                    stat.textContent = originalText;
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentDate = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
             };
+            document.getElementById('current-date').textContent = 
+                currentDate.toLocaleDateString('en-US', options);
             
-            setTimeout(updateCounter, 300);
+            // Add interactivity to notification button
+            document.querySelector('.notification-btn').addEventListener('click', function() {
+                alert('You have 3 new notifications:\n1. New booking from Sarah Johnson\n2. Payment received for order #CT-7839\n3. Event reminder: Corporate Lunch tomorrow');
+            });
+            
+            // Highlight active nav item
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update main header based on selected menu
+                    const header = document.querySelector('.header h2');
+                    const menuText = this.querySelector('span').textContent;
+                    header.textContent = menuText + ' - Caterix Dashboard';
+                });
+            });
+            
+            // Simple counter animation for stats
+            const stats = [
+                { id: 'total-orders', value: 142, prefix: '', speed: 10 },
+                { id: 'monthly-revenue', value: 12580, prefix: '$', speed: 50 },
+                { id: 'active-customers', value: 89, prefix: '', speed: 15 },
+                { id: 'pending-orders', value: 8, prefix: '', speed: 5 }
+            ];
+            
+            stats.forEach(stat => {
+                const element = document.getElementById(stat.id);
+                if (element) {
+                    let current = 0;
+                    const target = stat.value;
+                    const increment = target / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        element.textContent = stat.prefix + Math.round(current).toLocaleString();
+                    }, stat.speed);
+                }
+            });
         });
     </script>
 </body>
