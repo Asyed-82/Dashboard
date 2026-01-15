@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caterix - Catering Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a2e;
+            color: white;
+            padding: 25px 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 25px 25px;
+            border-bottom: 1px solid #2d3047;
+            margin-bottom: 25px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff7b54;
+        }
+        
+        .logo span {
+            color: #ffffff;
+        }
+        
+        .nav-menu {
+            flex-grow: 1;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: #b0b7c3;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: #252842;
+            color: white;
+            border-left-color: #ff7b54;
+        }
+        
+        .nav-item i {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .user-info {
+            padding: 20px 25px;
+            border-top: 1px solid #2d3047;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: #ff7b54;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 15px;
+        }
+        
+        .user-details h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .user-details p {
+            font-size: 12px;
+            color: #b0b7c3;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h2 {
+            font-size: 28px;
+            color: #1a1a2e;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .date-display {
+            background-color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            font-weight: 500;
+        }
+        
+        .notification-btn {
+            background-color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .notification-dot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 10px;
+            height: 10px;
+            background-color: #ff7b54;
+            border-radius: 50%;
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-info h3 {
+            font-size: 32px;
+            color: #1a1a2e;
+            margin-bottom: 5px;
+        }
+        
+        .stat-info p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .orders-icon {
+            background-color: rgba(255, 123, 84, 0.1);
+            color: #ff7b54;
+        }
+        
+        .revenue-icon {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+        }
+        
+        .customers-icon {
+            background-color: rgba(33, 150, 243, 0.1);
+            color: #2196f3;
+        }
+        
+        .pending-icon {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+        
+        /* Charts and Tables Section */
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        
+        .chart-container, .recent-orders {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section-header h3 {
+            font-size: 20px;
+            color: #1a1a2e;
+        }
+        
+        .view-all {
+            color: #ff7b54;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        /* Chart Styles */
+        .chart-placeholder {
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        /* Recent Orders Table */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .orders-table th {
+            text-align: left;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            color: #6c757d;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .orders-table td {
+            padding: 15px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .order-id {
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        
+        .customer-name {
+            font-weight: 500;
+        }
+        
+        .order-date {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .order-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-confirmed {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+        }
+        
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+        
+        .status-preparing {
+            background-color: rgba(33, 150, 243, 0.1);
+            color: #2196f3;
+        }
+        
+        /* Upcoming Events */
+        .upcoming-events {
+            margin-top: 30px;
+        }
+        
+        .event-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .event-details h4 {
+            margin-bottom: 5px;
+            color: #1a1a2e;
+        }
+        
+        .event-details p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .event-time {
+            background-color: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 0;
+            }
+            
+            .logo h1 span, .user-details, .nav-item span {
+                display: none;
+            }
+            
+            .logo {
+                justify-content: center;
+                padding: 0 0 20px;
+            }
+            
+            .nav-item {
+                justify-content: center;
+                padding: 15px 0;
+            }
+            
+            .nav-item i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            
+            .user-info {
+                justify-content: center;
+                padding: 15px 0;
+            }
+            
+            .user-avatar {
+                margin-right: 0;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="logo">
+            <h1>Cater<span>ix</span></h1>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="#" class="nav-item active">
+                <i class="fas fa-chart-bar"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Bookings</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-utensils"></i>
+                <span>Menu Items</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar">AO</div>
+            <div class="user-details">
+                <h4>Admin Owner</h4>
+                <p>Business Owner</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h2>Catering Dashboard</h2>
+            <div class="header-actions">
+                <div class="date-display">
+                    <i class="far fa-calendar-alt"></i> 
+                    <span id="current-date">Monday, June 12, 2023</span>
+                </div>
+                <div class="notification-btn">
+                    <i class="far fa-bell"></i>
+                    <div class="notification-dot"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>142</h3>
+                    <p>Total Orders</p>
+                </div>
+                <div class="stat-icon orders-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>$12,580</h3>
+                    <p>Revenue This Month</p>
+                </div>
+                <div class="stat-icon revenue-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>89</h3>
+                    <p>Active Customers</p>
+                </div>
+                <div class="stat-icon customers-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>8</h3>
+                    <p>Pending Orders</p>
+                </div>
+                <div class="stat-icon pending-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts and Recent Orders -->
+        <div class="dashboard-content">
+            <div class="chart-container">
+                <div class="section-header">
+                    <h3>Revenue Overview</h3>
+                    <a href="#" class="view-all">View Details</a>
+                </div>
+                <div class="chart-placeholder">
+                    <div style="text-align: center; color: #6c757d;">
+                        <i class="fas fa-chart-line" style="font-size: 48px; margin-bottom: 15px; color: #ddd;"></i>
+                        <p>Revenue chart would appear here</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recent-orders">
+                <div class="section-header">
+                    <h3>Recent Orders</h3>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+                
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="order-id">#CT-7842</td>
+                            <td class="customer-name">John Smith</td>
+                            <td class="order-date">Jun 12, 2023</td>
+                            <td><span class="order-status status-confirmed">Confirmed</span></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#CT-7841</td>
+                            <td class="customer-name">Sarah Johnson</td>
+                            <td class="order-date">Jun 11, 2023</td>
+                            <td><span class="order-status status-preparing">Preparing</span></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#CT-7840</td>
+                            <td class="customer-name">Michael Chen</td>
+                            <td class="order-date">Jun 11, 2023</td>
+                            <td><span class="order-status status-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#CT-7839</td>
+                            <td class="customer-name">Emily Wilson</td>
+                            <td class="order-date">Jun 10, 2023</td>
+                            <td><span class="order-status status-confirmed">Confirmed</span></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#CT-7838</td>
+                            <td class="customer-name">Robert Garcia</td>
+                            <td class="order-date">Jun 10, 2023</td>
+                            <td><span class="order-status status-preparing">Preparing</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Upcoming Events -->
+        <div class="chart-container upcoming-events">
+            <div class="section-header">
+                <h3>Upcoming Catering Events</h3>
+                <a href="#" class="view-all">View Calendar</a>
+            </div>
+            
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-details">
+                        <h4>Corporate Lunch - Tech Solutions Inc.</h4>
+                        <p>120 attendees • Office Building, Downtown</p>
+                    </div>
+                    <div class="event-time">Tomorrow, 12:00 PM</div>
+                </div>
+                
+                <div class="event-item">
+                    <div class="event-details">
+                        <h4>Wedding Reception - Miller & Johnson</h4>
+                        <p>250 attendees • Grand Hotel Ballroom</p>
+                    </div>
+                    <div class="event-time">Jun 15, 2023 • 6:00 PM</div>
+                </div>
+                
+                <div class="event-item">
+                    <div class="event-details">
+                        <h4>Charity Gala - Hope Foundation</h4>
+                        <p>300 attendees • Convention Center</p>
+                    </div>
+                    <div class="event-time">Jun 18, 2023 • 7:00 PM</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Set current date
+        const currentDate = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = currentDate.toLocaleDateString('en-US', options);
+        
+        // Add interactivity to notification button
+        document.querySelector('.notification-btn').addEventListener('click', function() {
+            alert('You have 3 new notifications');
+        });
+        
+        // Highlight active nav item
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                navItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Simulate loading animation for stat cards
+        const statNumbers = document.querySelectorAll('.stat-info h3');
+        statNumbers.forEach(stat => {
+            const originalText = stat.textContent;
+            stat.textContent = '0';
+            
+            let counter = 0;
+            const target = parseInt(originalText.replace(/[^0-9]/g, ''));
+            const increment = target / 50;
+            
+            const updateCounter = () => {
+                if (counter < target) {
+                    counter += increment;
+                    stat.textContent = originalText.includes('$') 
+                        ? '$' + Math.round(counter).toLocaleString() 
+                        : Math.round(counter).toLocaleString();
+                    setTimeout(updateCounter, 20);
+                } else {
+                    stat.textContent = originalText;
+                }
+            };
+            
+            setTimeout(updateCounter, 300);
+        });
+    </script>
+</body>
+</html>
